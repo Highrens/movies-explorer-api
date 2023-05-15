@@ -73,3 +73,8 @@ module.exports.createUser = (req, res, next) => {
       }
     });
 };
+
+module.exports.signout = (req, res) => {
+  res.clearCookie('jwt', { httpOnly: true, secure: true, sameSite: 'none' });
+  res.send({ message: 'Разлогинен' });
+};
