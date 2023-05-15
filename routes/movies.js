@@ -1,21 +1,7 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-
-const {
-  updateUser,
-  getMe,
-} = require('../controllers/users');
 const { getMySavedMovies, createMovie, deleteSavedMovie } = require('../controllers/movies');
 
-// возвращает информацию о пользователе (email и имя)
-router.get('/users/me', getMe);
-// обновляет информацию о пользователе (email и имя)
-router.patch('/users/me', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    email: Joi.string().email(),
-  }),
-}), updateUser);
 // возвращает все сохранённые текущим  пользователем фильмы
 router.get('/movies', getMySavedMovies);
 

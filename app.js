@@ -8,7 +8,9 @@ const cors = require('cors');
 const NotFoundError = require('./errors/not-found-err');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const limiter = require('./limiter');
 
+const { NODE_ENV, DATA_BASE } = process.env;
 const CorsOptions = {
   origin: [
     'https://praktikum.tk',
@@ -23,12 +25,13 @@ const CorsOptions = {
 const { PORT = 3000 } = process.env;
 const app = express();
 
+app.use(limiter);
 app.use(cors(CorsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsdb', {});
+mongoose.connect(NODE_ENV === 'production' ? DATA_BASE : 'mongodb://127.0.0.1:27017/bitfilmsdb', {});
 
 app.use(requestLogger);
 
@@ -36,7 +39,8 @@ app.use('/', require('./routes/auth_routes'));
 
 app.use(cookieParser());
 app.use(auth);
-app.use('/', require('./routes/routes'));
+app.use('/', require('./routes/movies'));
+app.use('/', require('./routes/users'));
 
 app.use((req, res, next) => {
   next(new NotFoundError('Ошибка путь не найден'));
