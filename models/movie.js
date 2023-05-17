@@ -15,12 +15,17 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   year: {
-    type: Number,
+    type: String,
     required: true,
   },
   description: {
     type: String,
     required: true,
+  },
+  image: {
+    type: String,
+    required: true,
+    validate: { validator: (str) => validator.isURL(str) },
   },
   trailerLink: {
     type: String,
@@ -38,15 +43,15 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   movieId: {
-    type: String,
+    type: Number,
     required: true,
   },
   nameRU: {
-    type: Number,
+    type: String,
     required: true,
   },
   nameEN: {
-    type: Number,
+    type: String,
     required: true,
   },
 });

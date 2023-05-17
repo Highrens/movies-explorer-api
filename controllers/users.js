@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const SomethingWrongError = require('../errors/something-wrong-err');
 const ConflictError = require('../errors/conflict-err');
 const User = require('../models/user');
+const { wrongData, emailAlreadyExsist, logoutSucceeded } = require('../constants/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 // GET /users/me возвращает информацию о пользователе (email и имя)
@@ -23,8 +24,10 @@ module.exports.updateUser = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new SomethingWrongError('Переданы некорректные данные при обновлении профиля'));
+      if (err.code === 11000) {
+        next(new ConflictError(emailAlreadyExsist));
+      } else if (err.name === 'ValidationError') {
+        next(new SomethingWrongError(wrongData));
       } else {
         next(err);
       }
@@ -65,9 +68,9 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(new ConflictError('пользователь с таким Email уже существует'));
+        next(new ConflictError(emailAlreadyExsist));
       } else if (err.name === 'ValidationError') {
-        next(new SomethingWrongError('Переданны неверные данные для регистрации'));
+        next(new SomethingWrongError(wrongData));
       } else {
         next(err);
       }
@@ -76,5 +79,5 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.signout = (req, res) => {
   res.clearCookie('jwt', { httpOnly: true, secure: true, sameSite: 'none' });
-  res.send({ message: 'Разлогинен' });
+  res.send({ message: logoutSucceeded });
 };

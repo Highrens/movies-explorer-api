@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { getMySavedMovies, createMovie, deleteSavedMovie } = require('../controllers/movies');
-
+const { urlPattern } = require('../constants/constants');
 // возвращает все сохранённые текущим  пользователем фильмы
 router.get('/movies', getMySavedMovies);
 
@@ -10,16 +10,15 @@ router.post('/movies', celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
     director: Joi.string().required(),
-    duration: Joi.string().required(),
+    duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    name: Joi.string().required(),
-    image: Joi.string().required().pattern(/(https?:\/\/)(w{3}\.)?(([a-zA-Z0-9]+).)+/),
-    trailer: Joi.string().required().pattern(/(https?:\/\/)(w{3}\.)?(([a-zA-Z0-9]+).)+/),
+    image: Joi.string().required().pattern(urlPattern),
+    trailerLink: Joi.string().required().pattern(urlPattern),
+    thumbnail: Joi.string().required().pattern(urlPattern),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    thumbnail: Joi.string().required().pattern(/(https?:\/\/)(w{3}\.)?(([a-zA-Z0-9]+).)+/),
-    movieId: Joi.string().required(),
   }),
 }), createMovie);
 

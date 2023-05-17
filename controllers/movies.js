@@ -2,6 +2,13 @@ const NotFoundError = require('../errors/not-found-err');
 const SomethingWrongError = require('../errors/something-wrong-err');
 const NoAccsesError = require('../errors/no-accses-err');
 const Movie = require('../models/movie');
+const {
+  wrongData,
+  filmDeleted,
+  noAccses,
+  filmNotFoundById,
+  badId,
+} = require('../constants/constants');
 
 // GET /movies возвращает все сохранённые текущим  пользователем фильмы
 module.exports.getMySavedMovies = (req, res, next) => {
@@ -21,7 +28,8 @@ module.exports.createMovie = (req, res, next) => {
       duration: req.body.duration,
       year: req.body.year,
       description: req.body.description,
-      trailerlink: req.body.trailerlink,
+      image: req.body.image,
+      trailerLink: req.body.trailerLink,
       thumbnail: req.body.thumbnail,
       owner: req.user._id,
       movieId: req.body.movieId,
@@ -34,7 +42,7 @@ module.exports.createMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new SomethingWrongError('Переданы некорректные данные при сохранении в фильме'));
+        next(new SomethingWrongError(wrongData));
       } else {
         next(err);
       }
@@ -44,17 +52,17 @@ module.exports.createMovie = (req, res, next) => {
 // delete удаляет карту
 module.exports.deleteSavedMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
-    .then((card) => {
-      if (!card) {
-        next(new NotFoundError('Фильм по указанному _id не найден'));
-      } if (card.owner._id.toString() === req.user._id.toString()) {
-        return Movie.deleteOne(card).then(() => { res.send({ message: 'Фильм удален' }); });
+    .then((movie) => {
+      if (!movie) {
+        next(new NotFoundError(filmNotFoundById));
+      } if (movie.owner._id.toString() === req.user._id.toString()) {
+        return Movie.deleteOne(movie).then(() => { res.send({ message: filmDeleted }); });
       }
-      return next(new NoAccsesError('Нет доступа'));
+      return next(new NoAccsesError(noAccses));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new SomethingWrongError('Ошибка: невалидный id'));
+        next(new SomethingWrongError(badId));
       } else {
         next(err);
       }
