@@ -46,7 +46,7 @@ module.exports.login = (req, res, next) => {
       );
       res.cookie('jwt', token, {
         maxAge: 3600000,
-        httpOnly: false,
+        httpOnly: true,
       });
       User.findById(user._id).then((userObj) => { res.send(userObj); });
     })
