@@ -28,7 +28,7 @@ app.use(errorLogger);
 
 app.use(limiter);
 
-app.use(cors());
+app.use(cors(CorsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
