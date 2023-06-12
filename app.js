@@ -10,10 +10,11 @@ const limiter = require('./limiter');
 const { DATA_BASE } = process.env;
 const CorsOptions = {
   origin: [
+    'https://iwillwatch.nomoredomains.rocks',
     'https://praktikum.tk',
     'http://praktikum.tk',
     'http://localhost:3000',
-    'https://iwillwatch.nomoredomains.rocks/',
+
   ],
   credentials: true,
   maxAge: 300,
